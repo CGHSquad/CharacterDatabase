@@ -1,0 +1,109 @@
+<html>
+<head>
+<title>NewDawnBot.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #5f826b; font-style: italic;}
+.s4 { color: #67a37c; font-style: italic;}
+.s5 { color: #68a67e; font-style: italic;}
+.s6 { color: #7a7e85;}
+.s7 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+NewDawnBot.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com</span><span class="s2">.</span><span class="s1">realcgh</span><span class="s2">.</span><span class="s1">newdawn</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">realcgh</span><span class="s2">.</span><span class="s1">newdawn</span><span class="s2">.</span><span class="s1">database</span><span class="s2">.</span><span class="s1">SQLiteSource</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">realcgh</span><span class="s2">.</span><span class="s1">newdawn</span><span class="s2">.</span><span class="s1">listeners</span><span class="s2">.</span><span class="s1">EventListener</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">io</span><span class="s2">.</span><span class="s1">github</span><span class="s2">.</span><span class="s1">cdimascio</span><span class="s2">.</span><span class="s1">dotenv</span><span class="s2">.</span><span class="s1">Dotenv</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">net</span><span class="s2">.</span><span class="s1">dv8tion</span><span class="s2">.</span><span class="s1">jda</span><span class="s2">.</span><span class="s1">api</span><span class="s2">.</span><span class="s1">OnlineStatus</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">net</span><span class="s2">.</span><span class="s1">dv8tion</span><span class="s2">.</span><span class="s1">jda</span><span class="s2">.</span><span class="s1">api</span><span class="s2">.</span><span class="s1">entities</span><span class="s2">.</span><span class="s1">Activity</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">net</span><span class="s2">.</span><span class="s1">dv8tion</span><span class="s2">.</span><span class="s1">jda</span><span class="s2">.</span><span class="s1">api</span><span class="s2">.</span><span class="s1">exceptions</span><span class="s2">.</span><span class="s1">InvalidTokenException</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">net</span><span class="s2">.</span><span class="s1">dv8tion</span><span class="s2">.</span><span class="s1">jda</span><span class="s2">.</span><span class="s1">api</span><span class="s2">.</span><span class="s1">requests</span><span class="s2">.</span><span class="s1">GatewayIntent</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">net</span><span class="s2">.</span><span class="s1">dv8tion</span><span class="s2">.</span><span class="s1">jda</span><span class="s2">.</span><span class="s1">api</span><span class="s2">.</span><span class="s1">sharding</span><span class="s2">.</span><span class="s1">DefaultShardManagerBuilder</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">net</span><span class="s2">.</span><span class="s1">dv8tion</span><span class="s2">.</span><span class="s1">jda</span><span class="s2">.</span><span class="s1">api</span><span class="s2">.</span><span class="s1">sharding</span><span class="s2">.</span><span class="s1">ShardManager</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">net</span><span class="s2">.</span><span class="s1">dv8tion</span><span class="s2">.</span><span class="s1">jda</span><span class="s2">.</span><span class="s1">api</span><span class="s2">.</span><span class="s1">utils</span><span class="s2">.</span><span class="s1">ChunkingFilter</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">net</span><span class="s2">.</span><span class="s1">dv8tion</span><span class="s2">.</span><span class="s1">jda</span><span class="s2">.</span><span class="s1">api</span><span class="s2">.</span><span class="s1">utils</span><span class="s2">.</span><span class="s1">MemberCachePolicy</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">net</span><span class="s2">.</span><span class="s1">dv8tion</span><span class="s2">.</span><span class="s1">jda</span><span class="s2">.</span><span class="s1">api</span><span class="s2">.</span><span class="s1">utils</span><span class="s2">.</span><span class="s1">cache</span><span class="s2">.</span><span class="s1">CacheFlag</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">slf4j</span><span class="s2">.</span><span class="s1">Logger</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">slf4j</span><span class="s2">.</span><span class="s1">LoggerFactory</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">SQLException</span><span class="s2">;</span>
+
+<span class="s3">/**</span>
+ <span class="s3">* This is the main class where we initialize our bot.</span>
+ <span class="s3">*</span>
+ <span class="s3">* </span><span class="s4">@author </span><span class="s3">TechnoVision </span><span class="s5">&lt;a href=&quot;https://www.youtube.com/TechnoVisionTV&quot;&gt;</span><span class="s3">...</span><span class="s5">&lt;/a&gt;</span>
+ <span class="s3">*/</span>
+
+<span class="s0">public class </span><span class="s1">NewDawnBot </span><span class="s2">{</span>
+    <span class="s0">private static final </span><span class="s1">Logger logger </span><span class="s2">= </span><span class="s1">LoggerFactory</span><span class="s2">.</span><span class="s1">getLogger</span><span class="s2">(</span><span class="s1">NewDawnBot</span><span class="s2">.</span><span class="s0">class</span><span class="s2">);</span>
+    <span class="s0">private final </span><span class="s1">Dotenv config</span><span class="s2">; </span><span class="s6">//Variable to load in private ENV files</span>
+    <span class="s0">private final </span><span class="s1">ShardManager shardManager</span><span class="s2">;</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">* Loads environment variables and builds the bot shard manager.</span>
+     <span class="s3">* </span><span class="s4">@throws </span><span class="s3">InvalidTokenException occurs when bot token is invalid.</span>
+     <span class="s3">*/</span>
+
+    <span class="s0">public </span><span class="s1">NewDawnBot</span><span class="s2">() </span><span class="s0">throws </span><span class="s1">InvalidTokenException</span><span class="s2">, </span><span class="s1">SQLException </span><span class="s2">{</span>
+        <span class="s1">SQLiteSource</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">();</span>
+
+        <span class="s1">config </span><span class="s2">= </span><span class="s1">Dotenv</span><span class="s2">.</span><span class="s1">configure</span><span class="s2">().</span><span class="s1">load</span><span class="s2">();</span><span class="s6">//loading in the info from the ENV file</span>
+        <span class="s1">String token </span><span class="s2">= </span><span class="s1">config</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s7">&quot;TOKEN&quot;</span><span class="s2">); </span><span class="s6">//Getting the Token Variable from ENV to initialize to string</span>
+
+        <span class="s6">// Initialize the Database</span>
+
+        <span class="s1">DefaultShardManagerBuilder builder </span><span class="s2">= </span><span class="s1">DefaultShardManagerBuilder</span><span class="s2">.</span><span class="s1">createDefault</span><span class="s2">(</span><span class="s1">token</span><span class="s2">);</span><span class="s6">//Allows bot to run on many instances</span>
+        <span class="s1">builder</span><span class="s2">.</span><span class="s1">setStatus</span><span class="s2">(</span><span class="s1">OnlineStatus</span><span class="s2">.</span><span class="s1">ONLINE</span><span class="s2">);</span>
+        <span class="s1">builder</span><span class="s2">.</span><span class="s1">setActivity</span><span class="s2">(</span><span class="s1">Activity</span><span class="s2">.</span><span class="s1">watching</span><span class="s2">(</span><span class="s7">&quot;M.I.D Volume 10 Reveal&quot;</span><span class="s2">));</span>
+        <span class="s1">builder</span><span class="s2">.</span><span class="s1">enableIntents</span><span class="s2">(</span><span class="s1">GatewayIntent</span><span class="s2">.</span><span class="s1">GUILD_MEMBERS</span><span class="s2">, </span><span class="s1">GatewayIntent</span><span class="s2">.</span><span class="s1">MESSAGE_CONTENT</span><span class="s2">, </span><span class="s1">GatewayIntent</span><span class="s2">.</span><span class="s1">GUILD_PRESENCES</span><span class="s2">);</span>
+        <span class="s1">builder</span><span class="s2">.</span><span class="s1">setMemberCachePolicy</span><span class="s2">(</span><span class="s1">MemberCachePolicy</span><span class="s2">.</span><span class="s1">ONLINE</span><span class="s2">);</span><span class="s6">//lazy loading</span>
+        <span class="s1">builder</span><span class="s2">.</span><span class="s1">setChunkingFilter</span><span class="s2">(</span><span class="s1">ChunkingFilter</span><span class="s2">.</span><span class="s1">ALL</span><span class="s2">);</span><span class="s6">//Forces bot to cache all users on start-up Warning: Only use this with MemberCachePolicy, or it'll mess up your bot</span>
+        <span class="s1">builder</span><span class="s2">.</span><span class="s1">enableCache</span><span class="s2">(</span><span class="s1">CacheFlag</span><span class="s2">.</span><span class="s1">ONLINE_STATUS</span><span class="s2">);</span><span class="s6">//used to enable certain cache for things such as activity or roles</span>
+        <span class="s1">shardManager </span><span class="s2">= </span><span class="s1">builder</span><span class="s2">.</span><span class="s1">build</span><span class="s2">();</span>
+
+        <span class="s6">//Register Listeners</span>
+        <span class="s1">shardManager</span><span class="s2">.</span><span class="s1">addEventListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EventListener</span><span class="s2">());</span>
+
+        <span class="s1">logger</span><span class="s2">.</span><span class="s1">info</span><span class="s2">(</span><span class="s7">&quot;Bot initialized successfully&quot;</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">Dotenv getConfig</span><span class="s2">(){</span>
+        <span class="s0">return </span><span class="s1">config</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">* Retrieves the bot shard manager.</span>
+     <span class="s3">* </span><span class="s4">@return </span><span class="s3">the ShardManager instance for the bot.</span>
+     <span class="s3">*/</span>
+
+    <span class="s0">public </span><span class="s1">ShardManager getShardManager</span><span class="s2">(){</span><span class="s0">return </span><span class="s1">shardManager</span><span class="s2">;}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">* Main method where we start our bot.</span>
+     <span class="s3">*/</span>
+
+    <span class="s0">public static void </span><span class="s1">main</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">args</span><span class="s2">) {</span>
+        <span class="s0">try </span><span class="s2">{</span>
+            <span class="s1">NewDawnBot bot </span><span class="s2">= </span><span class="s0">new </span><span class="s1">NewDawnBot</span><span class="s2">();</span>
+        <span class="s2">}</span><span class="s0">catch </span><span class="s2">(</span><span class="s1">InvalidTokenException e</span><span class="s2">){</span>
+            <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s7">&quot;ERROR: Provided bot token is invalid!&quot;</span><span class="s2">);</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException e</span><span class="s2">) {</span>
+            <span class="s0">throw new </span><span class="s1">RuntimeException</span><span class="s2">(</span><span class="s1">e</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

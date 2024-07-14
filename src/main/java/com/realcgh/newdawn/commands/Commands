@@ -1,0 +1,58 @@
+        String command = event.getName();
+
+        //Command that runs that greets the user
+        //getEphemeral(true) -> makes it where the user who uses the command can only see it
+        if (command.equals("welcome")){
+
+            String userTag = event.getUser().getName();
+            event.reply("Welcome to the server **" + userTag + "**!").queue();
+        } else if (command.equals("roles")) {
+
+            //makes it where it'll wait for your request, you can only reply once to a command
+            event.deferReply().setEphemeral(true).queue();
+            StringBuilder response = new StringBuilder();
+            for (Role role: event.getGuild().getRoles()){
+                response.append(role.getAsMention());
+            }
+            event.getHook().sendMessage(response.toString()).queue();
+        } else if (command.equals("user-roles")) {
+            // Defer the reply to allow for processing time
+            event.deferReply().setEphemeral(true).queue();
+
+            // Retrieve the mentioned user, if any
+            OptionMapping userOption = event.getOption("input");
+            Member member;
+
+            if (userOption != null) {
+                member = userOption.getAsMember();
+            } else {
+                member = event.getMember();
+            }
+
+            if (member == null) {
+                event.getHook().sendMessage("User not found!").queue();
+                return;
+            }
+
+            // Build the response message
+            StringBuilder response = new StringBuilder(member.getEffectiveName() + "'s roles:\n");
+
+            for (Role role : member.getRoles()) {
+                response.append(role.getAsMention());
+            }
+
+            // Send the response
+            event.getHook().sendMessage(response.toString()).queue();
+        } else if (command.equals("embed")) {
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Example Embed");
+            builder.setDescription("An example embed");
+            builder.addField("Field 1", "Value", false);
+            builder.addField("Field 2", "Value", false);
+            builder.addField("Field 3", "Value", false);
+            builder.setFooter("Example Footer");
+            builder.setColor(Color.BLUE);
+            builder.appendDescription(" This has been added");
+            builder.setAuthor("RealCGH");
+            event.replyEmbeds(builder.build()).queue();
+        }
