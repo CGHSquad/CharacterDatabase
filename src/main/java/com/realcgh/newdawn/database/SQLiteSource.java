@@ -58,27 +58,20 @@ public class SQLiteSource {
     }
 
 
-
-
     public static Connection getConnection() throws SQLException {
         return ds.getConnection();
     }
 
-    public static void createCharacter(String userId, String name, String race, String age, String abilities, String background) {
-        String sql = "INSERT INTO characters(userId, name, race, age, abilities, background) VALUES(?, ?, ?, ?, ?)";
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);
-            pstmt.setString(2, name);
-            pstmt.setString(3, race);
-            pstmt.setString(4, age);
-            pstmt.setString(5, abilities);
-            pstmt.setString(6, background);
-            pstmt.executeUpdate();
-            LOGGER.info("Character created successfully: {}", name);
-        } catch (SQLException e) {
-            LOGGER.error("Error creating character", e);
-        }
+    public static void createCharacter(Connection conn, String userId, String name, String race, String age, String abilities, String background) throws SQLException {
+        String sql = "INSERT INTO characters(userId, name, race, age, abilities, background) VALUES(?, ?, ?, ?, ?, ?)";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, userId);
+        pstmt.setString(2, name);
+        pstmt.setString(3, race);
+        pstmt.setString(4, age);
+        pstmt.setString(5, abilities);
+        pstmt.setString(6, background);
+        pstmt.executeUpdate();
     }
 }
 
